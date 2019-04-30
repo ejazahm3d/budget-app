@@ -134,12 +134,16 @@ let UIController = (function() {
         </div>
     </div>`;
       }
-      // replace it with actual data
+
       // insert the HTML into DOM
       console.log(document.querySelector(element));
       document.querySelector(element).insertAdjacentHTML("beforeend", html);
     },
-    clearFields: function() {
+    deleteListItem(selectorID) {
+      let el = document.getElementById(selectorID);
+      el.parentNode.removeChild(el);
+    },
+    clearFields() {
       let fields = [
         ...document.querySelectorAll(
           DOMstrings.inputDescription + ", " + DOMstrings.inputValue
@@ -177,11 +181,11 @@ let appController = (function(budgetCtrl, UICtrl) {
     document.addEventListener("keypress", event => {
       if (event.keyCode === 13 || event.which === 13) {
         ctrlAddItem();
-        document
-          .querySelector(DOM.container)
-          .addEventListener("click", ctrlDeleteItem);
       }
     });
+    document
+      .querySelector(DOM.container)
+      .addEventListener("click", ctrlDeleteItem);
   };
   const updateBudget = () => {
     //1. Calculate the budget
@@ -206,21 +210,22 @@ let appController = (function(budgetCtrl, UICtrl) {
       //5. calculate and update budget
       updateBudget();
     }
-    const ctrlDeleteItem = event => {
-      let itemID, splitID, type;
-      itemID = event.target.parentNode.parentNode.parentNode.parentNode.id;
-      if (itemID) {
-        // inc-1
-        splitID = itemID.split("-");
-        type = splitID[0];
-        ID = parseInt(splitID[1]);
-        //1. Delete the item from data structure
-        budgetCtrl.deleteItem(type, ID);
-        //2. Delete from User Interface
-
-        //3 Update and show the new budget
-      }
-    };
+  };
+  const ctrlDeleteItem = event => {
+    let itemID, splitID, type;
+    itemID = event.target.parentNode.parentNode.parentNode.parentNode.id;
+    if (itemID) {
+      // inc-1
+      splitID = itemID.split("-");
+      type = splitID[0];
+      ID = parseInt(splitID[1]);
+      //1. Delete the item from data structure
+      budgetCtrl.deleteItem(type, ID);
+      //2. Delete from User Interfaces
+      UICtrl.deleteListItem(itemID);
+      //3 Update and show the new budget
+      updateBudget();
+    }
   };
   return {
     init() {
