@@ -15,9 +15,6 @@ let budgetController = (function() {
     }
   }
 
-  const allExpenses = [];
-  const allIncomes = [];
-  let totalExpenses = 0;
   const data = {
     allItems: {
       exp: [],
@@ -26,6 +23,27 @@ let budgetController = (function() {
     totals: {
       exp: 0,
       inc: 0
+    }
+  };
+
+  return {
+    getItem: function(type, des, val) {
+      let newItem, ID;
+      // create new id
+      if (data.allItems[type].length > 0)
+        ID = data.allItems[type][data.allItems[type].length - 1].id + 1;
+      else ID = 0;
+      // create new item on inc and exp type
+      if (type === "exp") {
+        newItem = new Expense(ID, des, val);
+      } else if (type === "inc") {
+        newItem = new Income(ID, des, val);
+      }
+      // push the input our data structure
+      data.allItems[type].push(newItem);
+
+      // return the new element
+      return newItem;
     }
   };
 })();
@@ -45,6 +63,7 @@ let UIController = (function() {
         value: document.querySelector(DOMstrings.inputValue).value
       };
     },
+    addListItem: function(obj, type) {},
     getDOMstrings: function() {
       return DOMstrings;
     }
@@ -66,10 +85,12 @@ let appController = (function(budgetCtrl, UICtrl) {
   };
 
   const ctrlAddItem = function() {
+    let input, newItem;
     //1. Get The input data
-    let input = UICtrl.getInput();
+    input = UICtrl.getInput();
     console.log(input);
     //2. Add the item to the budget controller
+    newItem = budgetCtrl.getItem(input.type, input.description, input.value);
     //3. Change the User Interface
     //4. Calculate the budget
     //5 Display teh budget on the UI
