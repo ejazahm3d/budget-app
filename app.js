@@ -246,6 +246,18 @@ let UIController = (function() {
         months[month]
       }, ${year}`;
     },
+    changedType() {
+      document
+        .querySelectorAll(
+          DOMstrings.inputType +
+            "," +
+            DOMstrings.inputDescription +
+            "," +
+            DOMstrings.inputValue
+        )
+        .forEach(item => item.classList.toggle("red-focus"));
+      document.querySelector(DOMstrings.inputButton).classList.toggle("red");
+    },
     getDOMstrings: function() {
       return DOMstrings;
     }
@@ -267,6 +279,9 @@ let appController = (function(budgetCtrl, UICtrl) {
     document
       .querySelector(DOM.container)
       .addEventListener("click", ctrlDeleteItem);
+    document
+      .querySelector(DOM.inputType)
+      .addEventListener("change", UICtrl.changedType);
   };
   const updateBudget = () => {
     //1. Calculate the budget
