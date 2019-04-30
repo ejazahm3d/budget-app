@@ -133,7 +133,7 @@ let appController = (function(budgetCtrl, UICtrl) {
   };
   const ctrlAddItem = function() {
     let input, newItem;
-    //1. Get The input data
+    //1. Get The input dataa
     input = UICtrl.getInput();
     if (input.description !== "" && !isNaN(input.value) && input.value > 0) {
       //2. Add the item to the budget controller
