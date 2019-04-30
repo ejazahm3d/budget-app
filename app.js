@@ -82,23 +82,28 @@ let UIController = (function() {
     inputValue: ".add__value",
     inputButton: ".add__btn",
     incomeContainer: ".income__list",
-    expensesContainer: ".expenses__list"
+    expensesContainer: ".expenses__list",
+    budgetLabel: ".budget__value",
+    incomeLabel: ".budget__income--value",
+    expensesLabel: ".budget__expenses--value",
+    percentageLabel: ".budget__expenses--percentage",
+    container: ".container"
   };
   return {
-    getInput: function() {
+    getInput() {
       return {
         type: document.querySelector(DOMstrings.inputType).value,
         description: document.querySelector(DOMstrings.inputDescription).value,
         value: parseFloat(document.querySelector(DOMstrings.inputValue).value)
       };
     },
-    addListItem: function(obj, type) {
+    addListItem(obj, type) {
       let html, element;
 
       // Create HTml string with place holder text
       if (type === "inc") {
         element = DOMstrings.incomeContainer;
-        html = `<div class="item clearfix" id="income-${obj.id}">
+        html = `<div class="item clearfix" id="inc-${obj.id}">
         <div class="item__description">${obj.description}</div>
         <div class="right clearfix">
             <div class="item__value">${obj.value}</div>
@@ -110,15 +115,16 @@ let UIController = (function() {
       } else if (type === "exp") {
         element = DOMstrings.expensesContainer;
 
-        html = `<div class="item clearfix" id="income-${obj.id}">
-      <div class="item__description">${obj.description}</div>
-         <div class="right clearfix">
+        html = ` <div class="item clearfix" id="exp-${obj.id}">
+        <div class="item__description">${obj.description}</div>
+        <div class="right clearfix">
             <div class="item__value">${obj.value}</div>
-                <div class="item__delete">
-              <button class="item__delete--btn"><i class="ion-ios-close-outline"></i></button>
-             </div>
-          </div>
-         </div>`;
+            <div class="item__percentage">21%</div>
+            <div class="item__delete">
+                <button class="item__delete--btn"><i class="ion-ios-close-outline"></i></button>
+            </div>
+        </div>
+    </div>`;
       }
       // replace it with actual data
       // insert the HTML into DOM
@@ -133,6 +139,19 @@ let UIController = (function() {
       ];
       fields.forEach(field => (field.value = ""));
       fields[0].focus();
+    },
+    displayBudget(obj) {
+      document.querySelector(DOMstrings.budgetLabel).textContent = obj.budget;
+      document.querySelector(DOMstrings.incomeLabel).textContent =
+        obj.totalIncome;
+      document.querySelector(DOMstrings.expensesLabel).textContent =
+        obj.totalExp;
+
+      if (obj.percentage > 0)
+        document.querySelector(DOMstrings.percentageLabel).textContent =
+          obj.percentage + "%";
+      else
+        document.querySelector(DOMstrings.percentageLabel).textContent = "---";
     },
     getDOMstrings: function() {
       return DOMstrings;
@@ -150,6 +169,9 @@ let appController = (function(budgetCtrl, UICtrl) {
     document.addEventListener("keypress", event => {
       if (event.keyCode === 13 || event.which === 13) {
         ctrlAddItem();
+        document
+          .querySelector(DOM.container)
+          .addEventListener("click", ctrlDeleteItem);
       }
     });
   };
@@ -160,9 +182,9 @@ let appController = (function(budgetCtrl, UICtrl) {
     let budget = budgetCtrl.getBudget();
 
     //3. Display the budget on the UI
-    console.log(budget);
+    UICtrl.displayBudget(budget);
   };
-  const ctrlAddItem = function() {
+  const ctrlAddItem = () => {
     let input, newItem;
     //1. Get The input dataa
     input = UICtrl.getInput();
@@ -176,11 +198,32 @@ let appController = (function(budgetCtrl, UICtrl) {
       //5. calculate and update budget
       updateBudget();
     }
+    const ctrlDeleteItem = event => {
+      let itemID, splitID, type;
+      itemID = event.target.parentNode.parentNode.parentNode.parentNode.id;
+      if (itemID) {
+        // inc-1
+        splitID = itemID.split("-");
+        type = splitID[0];
+        ID = splitID[1];
+        //1. Delete the item from data structure
+
+        //2. Delete from User Interface
+
+        //3 Update and show the new budget
+      }
+    };
   };
   return {
-    init: function() {
+    init() {
       console.log("App has started");
       setUpEventListeners();
+      UICtrl.displayBudget({
+        budget: 0,
+        totalIncome: 0,
+        totalExp: 0,
+        percentage: -1
+      });
     }
   };
 })(budgetController, UIController);
