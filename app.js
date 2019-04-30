@@ -196,6 +196,12 @@ let appController = (function(budgetCtrl, UICtrl) {
     //3. Display the budget on the UI
     UICtrl.displayBudget(budget);
   };
+  const updatePercentages = () => {
+    // 1. Calculate percentages
+    //2. Read percentages from the budget  controller
+    //3. Update the UI
+  };
+
   const ctrlAddItem = () => {
     let input, newItem;
     //1. Get The input dataa
@@ -209,6 +215,7 @@ let appController = (function(budgetCtrl, UICtrl) {
       UICtrl.clearFields();
       //5. calculate and update budget
       updateBudget();
+      //6. Calculate and update the percentages
     }
   };
   const ctrlDeleteItem = event => {
