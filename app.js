@@ -1,5 +1,33 @@
 let budgetController = (function() {
   // Some Code
+  class Expense {
+    constructor(id, description, value) {
+      this.id = id;
+      this.description = description;
+      this.value = value;
+    }
+  }
+  class Income {
+    constructor(id, description, value) {
+      this.id = id;
+      this.description = description;
+      this.value = value;
+    }
+  }
+
+  const allExpenses = [];
+  const allIncomes = [];
+  let totalExpenses = 0;
+  const data = {
+    allItems: {
+      exp: [],
+      inc: []
+    },
+    totals: {
+      exp: 0,
+      inc: 0
+    }
+  };
 })();
 
 let UIController = (function() {
