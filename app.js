@@ -120,6 +120,22 @@ let UIController = (function() {
     container: ".container",
     expensePercLabel: ".item__percentage"
   };
+  const formatNumber = (num, type) => {
+    let numSplit, int, dec, sign;
+    num = Math.abs(num);
+    num = num.toFixed(2);
+    numSplit = num.split(".");
+    int = numSplit[0];
+    if (int.length > 3) {
+      int =
+        int.substr(0, int.length - 3) +
+        "," +
+        int.substr(int.length - 3, int.length);
+    }
+    dec = numSplit[1];
+    type === "exp" ? (sign = "-") : (sign = "+");
+    return `${sign} ${int}.${dec}`;
+  };
   return {
     getInput() {
       return {
@@ -137,7 +153,7 @@ let UIController = (function() {
         html = `<div class="item clearfix" id="inc-${obj.id}">
         <div class="item__description">${obj.description}</div>
         <div class="right clearfix">
-            <div class="item__value">${obj.value}</div>
+            <div class="item__value">${formatNumber(obj.value, type)}</div>
             <div class="item__delete">
                 <button class="item__delete--btn"><i class="ion-ios-close-outline"></i></button>
             </div>
@@ -149,7 +165,7 @@ let UIController = (function() {
         html = ` <div class="item clearfix" id="exp-${obj.id}">
         <div class="item__description">${obj.description}</div>
         <div class="right clearfix">
-            <div class="item__value">${obj.value}</div>
+            <div class="item__value">${formatNumber(obj.value, type)}</div>
             <div class="item__percentage">21%</div>
             <div class="item__delete">
                 <button class="item__delete--btn"><i class="ion-ios-close-outline"></i></button>
@@ -185,11 +201,20 @@ let UIController = (function() {
         });
     },
     displayBudget(obj) {
-      document.querySelector(DOMstrings.budgetLabel).textContent = obj.budget;
-      document.querySelector(DOMstrings.incomeLabel).textContent =
-        obj.totalIncome;
-      document.querySelector(DOMstrings.expensesLabel).textContent =
-        obj.totalExp;
+      let type;
+      obj.budget > 0 ? (type = "inc") : (type = "exp");
+      document.querySelector(DOMstrings.budgetLabel).textContent = formatNumber(
+        obj.budget,
+        type
+      );
+      document.querySelector(DOMstrings.incomeLabel).textContent = formatNumber(
+        obj.totalIncome,
+
+        "inc"
+      );
+      document.querySelector(
+        DOMstrings.expensesLabel
+      ).textContent = formatNumber(obj.totalExp, "exp");
 
       if (obj.percentage > 0)
         document.querySelector(DOMstrings.percentageLabel).textContent =
@@ -197,6 +222,7 @@ let UIController = (function() {
       else
         document.querySelector(DOMstrings.percentageLabel).textContent = "---";
     },
+
     getDOMstrings: function() {
       return DOMstrings;
     }
